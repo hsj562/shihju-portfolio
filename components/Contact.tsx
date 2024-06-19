@@ -5,10 +5,6 @@ import { motion } from "framer-motion"
 import { FormEvent, useRef, useState } from "react"
 import emailjs from "@emailjs/browser"
 
-const public_key = 'Cw03eVTN0juaIIh19'
-const temp_id = 'template_hdajt12'
-const service_id = 'service_xc9bm6w'
-
 const validEmailFormat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
 const Contact = () => {
@@ -19,6 +15,7 @@ const Contact = () => {
         email: '',
         msg: ''
       });
+
     const handleChange = (e: any) => {
         const { name, value } = e.target; 
         setFormData({...formData, [name]: value})
@@ -33,23 +30,26 @@ const Contact = () => {
         setLoading(true)
            
         emailjs.send(
-            service_id,
-            temp_id,
+            process.env.NEXT_PUBLIC_SERVICE_ID ?? '',
+            process.env.NEXT_PUBLIC_TEMPLATE_ID ?? '',
             {
                 from_name: formData.name,
                 to_name: 'James',
                 from_email: formData.email,
-                to_email: 'jameshsu309@gmail.com',
+                to_email: process.env.NEXT_PUBLIC_EMAIL,
                 meassage: formData.msg
-            }
+            },
+            process.env.NEXT_PUBLIC_PUBLIC_KEY
+
         )
         .then(() => {
             setLoading(false)
-            alert('Than you! The message is sent successfully. I will get back to you ASAP!')
+            alert('Thank you! The message is sent successfully. I will get back to you ASAP!')
             setFormData({name: '', email: '', msg: ''})
         }, (error) => {
             setLoading(false)
             alert('Oops, something went wrong. :(')
+            console.log(error)
         })
     }
     return (
